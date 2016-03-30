@@ -1,0 +1,53 @@
+\documentclass{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{Rerank}
+\author{Jordan Matelsky}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+\subsection{Runner.py}
+In order to improve the reliability and reproducibility of the testing scheme that I use, I wrote a runner (runner.py) to make testing as simple as running a single line from the terminal.
+
+\subsection{Testing}
+Test a Python file by running \texttt{./runner [filename] [optional csv args]}. For instance, to test the baseline that was provided, type the following into the terminal: \texttt{./runner rerank-baseline}. To test the provided oracle, run \texttt{./runner oracle}.
+
+This prints two lines: a tuple of results, in the order of $(oracle, tested, time)$, and a timestamp of how long the test took to run (not including the oracle).
+
+\section{Improvement Strategy}
+To improve over the baseline reranker, I followed several methods to improve upon the low baseline set by the BLEU computation on \texttt{rerank}.
+
+\subsection{Non-ASCII Penalty}
+This function, implemented in \texttt{Modes.DEFAULT_CHECK_ASCII}, deduces a penalty from the score of a hypothesis every time a word is encountered for which an ASCII-decode is impossible. Naturally, this fails in languages that use the Roman alphabet, but for this example (Cyrillic alphabet), I am able to improve BLEU using a penalty of 20 per non-ASCII (and thus, presumably non-translated) word.
+
+\subsubsection{Advantages}
+This prevents sentences that have many untranslated words from being considered `best'. It also seems to generally \textit{improve} BLEU — in my preliminary tests, I did not see cases where this reduced efficacy of the overall ranking.
+
+This is also a very quick check to perform, and it likely serves as a good ``first-line of defense'' when considering hypotheses.
+
+\subsubsection{Disadvantages}
+This does not necessarily always give the best hypothesis. Consider a case like the following, where ### indicates an ASCII failure:
+
+\textit{He is a conference last Thursday.} \\
+\textit{## went to the conference last Thursday.}
+
+The second sentence is clearly superior in terms of conveying meaning, but the first sentence would be rated `better' by this algorithm alone. Thus, it is likely that we need to add the insight from other algorithms rather than run this one alone.
+
+\subsubsection{Results}
+This algorithm alone performs only marginally better than the standalone baseline. While the baseline scores $0.273509457562$, ASCII-checking scores$0.27\textbf{5}351661881$.
+
+\begin{figure}[ht]
+\caption{Naive speeds when running WORDNET (red) compared with dynamic version (blue), which saves the encountered words to a local dictionary for faster lookup.}
+\label{fig:dynamic}
+\centering
+\includegraphics[width=0.5\textwidth]{figure_2}
+\end{figure}
+
+\end{document}

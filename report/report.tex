@@ -25,7 +25,7 @@ This prints two lines: a tuple of results, in the order of $(oracle, tested, tim
 To improve over the baseline reranker, I followed several methods to improve upon the low baseline set by the BLEU computation on \texttt{rerank}.
 
 \subsection{Non-ASCII Penalty}
-This function, implemented in \texttt{Modes.DEFAULT_CHECK_ASCII}, deduces a penalty from the score of a hypothesis every time a word is encountered for which an ASCII-decode is impossible. Naturally, this fails in languages that use the Roman alphabet, but for this example (Cyrillic alphabet), I am able to improve BLEU using a penalty of 20 per non-ASCII (and thus, presumably non-translated) word.
+This function, implemented in \texttt{Modes.DEFAULT\_CHECK\_ASCII}, deduces a penalty from the score of a hypothesis every time a word is encountered for which an ASCII-decode is impossible. Naturally, this fails in languages that use the Roman alphabet, but for this example (Cyrillic alphabet), I am able to improve BLEU using a penalty of 20 per non-ASCII (and thus, presumably non-translated) word.
 
 \subsubsection{Advantages}
 This prevents sentences that have many untranslated words from being considered `best'. It also seems to generally \textit{improve} BLEU — in my preliminary tests, I did not see cases where this reduced efficacy of the overall ranking.
@@ -33,15 +33,17 @@ This prevents sentences that have many untranslated words from being considered 
 This is also a very quick check to perform, and it likely serves as a good ``first-line of defense'' when considering hypotheses.
 
 \subsubsection{Disadvantages}
-This does not necessarily always give the best hypothesis. Consider a case like the following, where ### indicates an ASCII failure:
+This does not necessarily always give the best hypothesis. Consider a case like the following, where \# indicates an ASCII failure: \\
+
 
 \textit{He is a conference last Thursday.} \\
-\textit{## went to the conference last Thursday.}
+
+\textit{\# went to the conference last Thursday.} \\
 
 The second sentence is clearly superior in terms of conveying meaning, but the first sentence would be rated `better' by this algorithm alone. Thus, it is likely that we need to add the insight from other algorithms rather than run this one alone.
 
 \subsubsection{Results}
-This algorithm alone performs only marginally better than the standalone baseline. While the baseline scores $0.273509457562$, ASCII-checking scores$0.27\textbf{5}351661881$.
+This algorithm alone performs only marginally better than the standalone baseline. While the baseline scores $0.273509457562$, ASCII-checking scores $\approx0.003$ higher, $0.27\textbf{5}351661881$.
 
 \begin{figure}[ht]
 \caption{Naive speeds when running WORDNET (red) compared with dynamic version (blue), which saves the encountered words to a local dictionary for faster lookup.}

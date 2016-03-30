@@ -35,7 +35,6 @@ This is also a very quick check to perform, and it likely serves as a good ``fir
 \subsubsection{Disadvantages}
 This does not necessarily always give the best hypothesis. Consider a case like the following, where \# indicates an ASCII failure: \\
 
-
 \textit{He is a conference last Thursday.} \\
 
 \textit{\# went to the conference last Thursday.} \\
@@ -43,13 +42,43 @@ This does not necessarily always give the best hypothesis. Consider a case like 
 The second sentence is clearly superior in terms of conveying meaning, but the first sentence would be rated `better' by this algorithm alone. Thus, it is likely that we need to add the insight from other algorithms rather than run this one alone.
 
 \subsubsection{Results}
-This algorithm alone performs only marginally better than the standalone baseline. While the baseline scores $0.273509457562$, ASCII-checking scores $\approx0.003$ higher, $0.27\textbf{5}351661881$.
+This algorithm alone performs only marginally better than the standalone baseline. While the baseline scores $27.35$, ASCII-checking scores $\approx0.003$ higher, $27.\textbf{5}4$.
 
-\begin{figure}[ht]
-\caption{Naive speeds when running WORDNET (red) compared with dynamic version (blue), which saves the encountered words to a local dictionary for faster lookup.}
-\label{fig:dynamic}
-\centering
-\includegraphics[width=0.5\textwidth]{figure_2}
-\end{figure}
+When the \texttt{CHECK\_ASCII} algorithm is run on its own, it performs slightly worse than baseline, at $26.3$.
+
+\subsection{Word Count}
+Next, I implemented a word-count feature, as this had been widely regarded as a useful measure in previous work \cite{upennstudent,hmm11}. Because BLEU scores fundamentally correlate with sentence-length, it is important that we consider this when scoring sentences in order to prevent extreme-length sentences from being weighted improperly.
+
+\subsubsection{Advantages}
+Again, this is a very quick implementation, but it is, with regards to its speed, disproportionately (very!) useful. (See \textit{Results} for numerical results.)
+
+\subsubsection{Disadvantages}
+This approach naturally fails in cases where sentence-length differs dramatically. Consider languages such as German where compound-words reduce the length of a sentence in word-count, but maintain meaning. BLEU is a useful metric for sentence structure in some languages, but a more general algorithm should be used for a general translation scoring mechanism.
+
+\subsubsection{Results}
+When run alone, word count is (not unexpectedly) useless, scoring well below baseline. However, when run in conjunction with the default scoring system (sum), it performs notably better than baseline, scoring $28.7$ (baseline = $27.35$).
+
+When all three thus-far explored algorithms are run together (Default baseline, ASCII, and word-count), BLEU-score reaches $28.8$.
+
+% \begin{figure}[ht]
+% \caption{Naive speeds when running WORDNET (red) compared with dynamic version (blue), which saves the encountered words to a local dictionary for faster lookup.}
+% \label{fig:dynamic}
+% \centering
+% \includegraphics[width=0.5\textwidth]{figure_2}
+% \end{figure}
+
+\medskip
+
+\begin{thebibliography}{9}
+\bibitem{upennstudent}
+UPenn Student (Name not provided).
+\textit{CIS526 HW4 Report}.
+University of Pennsylvania, 2015. \texttt{http://www.seas.upenn.edu/~cis526/reports/hw4/828463.pdf}
+
+\bibitem{hmm11}
+Hopkins, Mark, and Jonathan May. \textit{``Tuning as ranking.''}
+Proceedings of the Conference on Empirical Methods in Natural Language Processing. Association for Computational Linguistics, 2011.
+
+\end{thebibliography}
 
 \end{document}

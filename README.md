@@ -1,3 +1,7 @@
+Jordan Matelsky's (jmatels1) implementation of `rerank`, as per [homework 4](http://mt-class.org/jhu/hw4.html).
+
+--------------
+
 There are three Python programs here (`-h` for usage):
 
  - `./rerank` chooses the best candidate translations from a k-best list using a linear model.
@@ -18,5 +22,3 @@ The `data/` directory contains training, devlopment, and test data.
  - `dev+test.src`: Russian source sentences.
  - `dev.ref`: English references sentences for the first half of `dev+test.src`.
  - `dev+test.100best`: Candidate translations of `dev+test.src`.
-
-

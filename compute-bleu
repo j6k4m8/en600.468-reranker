@@ -7,8 +7,12 @@ import sys
 import bleu
 
 optparser = optparse.OptionParser()
-optparser.add_option("-r", "--reference", dest="reference", default="data/dev.ref", help="Target language reference sentences")
-(opts,_) = optparser.parse_args()
+optparser.add_option("-r", "--reference",
+                     dest="reference",
+                     default="data/dev.ref",
+                     help="Target language reference sentences")
+
+(opts, _) = optparser.parse_args()
 
 ref = [line.strip().split() for line in open(opts.reference)]
 hyp = [line.strip().split() for line in sys.stdin]

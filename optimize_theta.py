@@ -4,6 +4,7 @@ import subprocess
 import sys
 import time
 import pandas as pd
+import numpy
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
@@ -21,11 +22,14 @@ def run_with_theta(t, s):
 
 results = []
 
-for i in range(0, 1000, 10):
-    for j in range(0, 1000, 10):
-        io = i/1000.
-        jo = j/1000.
-    results.append(run_with_theta(io, jo))
+for i in numpy.random.randn(5)/2. - 0.5:
+    for j in numpy.random.randn(5)/2. - 0.5:
+        results.append(run_with_theta(i, j))
+# for i in range(0, 1000, 100):
+#     for j in range(0, 1000, 100):
+#         io = i/1000.
+#         jo = j/1000.
+#         results.append(run_with_theta(io, jo))
 #
 # rpd = pd.DataFrame()
 # rpd.append([{
@@ -42,8 +46,10 @@ ys = [r[1] for r in results]
 zs = [r[2] for r in results]
 
 fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+ax = fig.add_subplot(111)
+#
+# ax.scatter(xs, ys, c=zs)
 
-ax.scatter(xs, ys, zs)
-
+rpd = pd.DataFrame.from_items([('x', xs), ('y', xs), ('z', xs)])
+sns.heatmap(rpd)
 plt.show()

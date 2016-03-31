@@ -60,12 +60,35 @@ When run alone, word count is (not unexpectedly) useless, scoring well below bas
 
 When all three thus-far explored algorithms are run together (Default baseline, ASCII, and word-count), BLEU-score reaches $28.8$.
 
-% \begin{figure}[ht]
-% \caption{Naive speeds when running WORDNET (red) compared with dynamic version (blue), which saves the encountered words to a local dictionary for faster lookup.}
-% \label{fig:dynamic}
-% \centering
-% \includegraphics[width=0.5\textwidth]{figure_2}
-% \end{figure}
+\subsection{2-Gram Popularity}
+My final contribution to the dev-score as submitted via the leaderboard was adding a basic 2-gram implementation that counts 2-grams \textit{across the hypothesis file}. This is an interesting approach because it does not require a language model or any other external information; all it uses is the already-provided list of hypothesis for \textit{all} sentences.
+
+This provides interesting information: Namely, if a sentence is largely comprised of 2-grams that are seen nowhere else in the corpus, then it is likely that this is a poor translation. Conversely, a sentence whose n-grams are common across the corpus is likely well-formulated.
+
+\subsubsection{Advantages}
+Even running \textit{all} of the aforementioned implementations, the runner is still quite quick, and so no efficiency is fundamentally lost by adding this feature.
+
+Additionally, accounting for this feature improves the score of the overall computation, as explained in the next section.
+
+\subsubsection{Disadvantages}
+In the worst-case, a hypothesis corpus contains a high frequency of recurrent but inaccurate 2-gram (for instance, a 2-gram that is not translated) — in this case, any sentence that contains that `bad' 2-gram would be positively weighted. However, in a ``best-attempt'' corpus such as the provided data, this algorithm should not encounter this weakness.
+
+\subsubsection{Results}
+When run in conjunction with all of the above implementations, BLEU-score is $28.87$ (baseline = $27.35$).
+
+\section{Running}
+To run any of the implementations mentioned above, use \texttt{rerank-2grams}. Comment out or de-comment any combination of lines 106-109 to explore behavior with various sub-components of this submission.
+
+\begin{verbatim}
+105|  score = score_hypothesis(hyp, feats, weights, fns=[
+106|      (Modes.DEFAULT, {}),
+107|      (Modes.CHECK_ASCII, {}),
+108|      (Modes.WORD_COUNT, {'word_count_weight': 1.24}),
+109|      (Modes.TWOGRAM, {'gram_weight': 5}),
+110|   ])
+\end{verbatim}
+
+To further modify, the syntax of my \texttt{score\_hypothesis} function takes a hypothesis, features, weights, and then \texttt{fns}, which is a list of tuples, each of which is of the format \texttt{(function ref, named arguments)}.
 
 \medskip
 
